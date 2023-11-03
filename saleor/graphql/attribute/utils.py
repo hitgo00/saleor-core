@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Optional, Union
 import graphene
 from django.core.exceptions import ValidationError
 from django.db.models import Q
+from django.db.models.expressions import Exists, OuterRef
 from django.db.utils import IntegrityError
 from django.template.defaultfilters import truncatechars
 from django.utils import timezone
@@ -15,7 +16,7 @@ from django.utils.text import slugify
 from graphql.error import GraphQLError
 from text_unidecode import unidecode
 
-from ...attribute import AttributeEntityType, AttributeInputType, AttributeType
+from ...attribute import AttributeEntityType, AttributeInputType
 from ...attribute import models as attribute_models
 from ...attribute.utils import (
     associate_attribute_values_to_instance,
@@ -851,13 +852,15 @@ class ProductAttributeAssignmentMixin(AttributeAssignmentMixin):
         lookup_field: str,
         value,
     ):
-        return (
-            attribute.values.filter(
-                productvalueassignment__product_id=instance.pk,
-                **{lookup_field: value},
-            ).first()
-            or None
+        assigned_values = attribute_models.AssignedProductAttributeValue.objects.filter(
+            product_id=instance.pk
         )
+
+        return attribute_models.AttributeValue.objects.filter(
+            Exists(assigned_values.filter(value_id=OuterRef("id"))),
+            attribute_id=attribute.pk,
+            **{lookup_field: value},
+        ).first()
 
     @classmethod
     def save(
@@ -912,12 +915,6 @@ class ProductAttributeAssignmentMixin(AttributeAssignmentMixin):
         # drop attribute assignment model when values are unassigned from instance
         if clean_assignment:
             disassociate_attributes_from_instance(instance, *clean_assignment)
-
-
-def get_variant_selection_attributes(qs: "QuerySet") -> "QuerySet":
-    return qs.filter(
-        type=AttributeType.PRODUCT_TYPE, attributevariant__variant_selection=True
-    )
 
 
 def prepare_attribute_values(attribute: attribute_models.Attribute, values: list[str]):

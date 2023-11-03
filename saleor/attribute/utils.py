@@ -68,7 +68,7 @@ def associate_attribute_values_to_instance(
 def validate_product_type_owns_attribute(
     instance: Product, *attributes: Attribute
 ) -> None:
-    """Check given value IDs are belonging to the given attribute.
+    """Check if given Attributes belong to the given Product instance.
 
     :raise: AssertionError
     """
@@ -86,7 +86,7 @@ def validate_product_type_owns_attribute(
 
 
 def validate_attribute_owns_values(attribute: Attribute, value_ids: set[int]) -> None:
-    """Check given value IDs are belonging to the given attribute.
+    """Check if given value IDs belong to the given Attribute.
 
     :raise: AssertionError
     """

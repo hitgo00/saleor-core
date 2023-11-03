@@ -38,24 +38,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # fill in data that was previously done in a celery task
-        migrations.RunSQL(
-            """
-            UPDATE attribute_assignedproductattributevalue
-            SET product_id = (
-                SELECT product_id
-                FROM attribute_assignedproductattribute
-                WHERE attribute_assignedproductattributevalue.assignment_id = attribute_assignedproductattribute.id
-            )
-            WHERE id IN (
-                SELECT ID FROM attribute_assignedproductattributevalue
-                WHERE product_id IS NULL
-                ORDER BY ID DESC
-                FOR UPDATE
-            );
-            """,
-            reverse_sql=migrations.RunSQL.noop,  # noqa
-        ),
         # Set FKs to allow null values before marking their models/fields deleted
         migrations.AlterField(
             model_name="assignedproductattributevalue",
@@ -102,11 +84,11 @@ class Migration(migrations.Migration):
 
             ALTER TABLE attribute_assignedproductattributevalue
             DROP CONSTRAINT IF EXISTS
-            attribute_assignedpa_assignment_id_6863be0a_fk_attribute
+            attribute_assignedpa_assignment_id_6863be0a_fk_attribute;
 
             ALTER TABLE attribute_assignedproductattributevalue
             DROP CONSTRAINT IF EXISTS
-            attribute_assignedproduc_value_id_assignment_id_ad6f5a87_uniq
+            attribute_assignedproduc_value_id_assignment_id_ad6f5a87_uniq;
             """,
             reverse_sql=migrations.RunSQL.noop,
         ),

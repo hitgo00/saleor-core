@@ -14,12 +14,8 @@ echo "Checking if the database is empty..."
 if python3 manage.py shell -c "from django.contrib.auth.models import User; exit(0 if User.objects.exists() else 1)"; then
     echo "Database already populated."
 else
-    echo "Populating the database with example data..."
-    python3 manage.py populatedb
-
-    # Only attempt to create superuser if it doesn't exist.
-    echo "Creating superuser..."
-    python3 manage.py createsuperuser --noinput || true
+    echo "Populating the database with example data && Creating superuser..."
+    python3 manage.py populatedb --createsuperuser || true
 fi
 
 # Start the application

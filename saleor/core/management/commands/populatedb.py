@@ -104,9 +104,9 @@ class Command(BaseCommand):
             self.stdout.write(msg)
         for msg in create_vouchers():
             self.stdout.write(msg)
-        for msg in create_users(user_password, 20):
+        for msg in create_users(user_password, 1):
             self.stdout.write(msg)
-        for msg in create_orders(20):
+        for msg in create_orders(0):
             self.stdout.write(msg)
         for msg in create_gift_cards():
             self.stdout.write(msg)

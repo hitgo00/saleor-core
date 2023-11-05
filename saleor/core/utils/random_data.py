@@ -165,7 +165,7 @@ COLLECTION_IMAGES = {1: "summer.jpg", 2: "clothing.jpg", 3: "clothing.jpg"}
 @lru_cache()
 def get_sample_data():
     path = os.path.join(
-        settings.PROJECT_ROOT, "saleor", "static", "populatedb_data.json"
+        settings.PROJECT_ROOT, "saleor", "static", "filtered_populatedb_data.json"
     )
     with open(path, encoding="utf8") as f:
         db_items = json.load(f)

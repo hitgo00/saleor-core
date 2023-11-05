@@ -41,6 +41,9 @@ RUN echo 'image/avif avif' >> /etc/mime.types
 RUN mkdir -p /app/media /app/static \
   && chown -R saleor:saleor /app/
 
+# Define /app/media as a mountable volume
+VOLUME /app/media
+
 COPY --from=build-python /usr/local/lib/python3.9/site-packages/ /usr/local/lib/python3.9/site-packages/
 COPY --from=build-python /usr/local/bin/ /usr/local/bin/
 COPY . /app
